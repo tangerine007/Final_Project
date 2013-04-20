@@ -6,8 +6,12 @@ public class Ant {
 	Cell current;
 	
 	//CONSTRUCTORS
-	public Ant(Cell start){
-		current=start;
+	public Ant(){
+		current=null;
+	}
+	
+	public Ant(Cell startLoc){
+		current=startLoc;
 		
 		path=new Cell[1];
 		path[0]=current;
@@ -22,9 +26,22 @@ public class Ant {
 	}
 	
 	//SET_METHODS
-	public void move(){
-		//ant colony optimization algorithm goes here
-		//modify current cell
-		//expand path and add current cell to path
+	public void setLoc(Cell startLoc){
+		current=startLoc;
+		
+		path=new Cell[1];
+		path[0]=current;
+	}
+
+	//MUT_METHODS
+	public void move(Cell newCell){
+		current=newCell;
+		//can optimize this
+		Cell[] temp=path;
+		path=new Cell[temp.length+1];
+		for(int i=0;i<temp.length;i++){
+			path[i]=temp[i];
+		}
+		path[temp.length]=current;
 	}
 }

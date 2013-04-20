@@ -8,9 +8,10 @@ public class Cell {
 	
 	
 	//CONSTRUCTORS
-	public Cell(int[] loc_in){
+	public Cell(int x, int y){
 		pheromone=0;
-		loc= loc_in;
+		loc[0]=x;
+		loc[1]=y;
 	}
 	
 	//GET_METHODS
@@ -23,7 +24,7 @@ public class Cell {
 	
 	//SET_METHODS
 	
-	//"MUTATE"_METHODS
+	///MUT_METHODS
 	public void incPheromone(int inc_in){
 		pheromone+=inc_in;
 	}
