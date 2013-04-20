@@ -4,6 +4,7 @@ public class Ant {
 
 	Cell[] path;
 	Cell current;
+	boolean active;
 	
 	//CONSTRUCTORS
 	public Ant(){

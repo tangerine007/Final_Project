@@ -7,7 +7,7 @@ public class Submission {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Map map=new Map(5,6,10);//creates a map width=5, height=6, #ants=10
+		Map map=new Map(5,6);//creates a map width=5, height=6, #ants=1
 		
 	}
 

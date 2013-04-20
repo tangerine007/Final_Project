@@ -1,12 +1,16 @@
 package antColony;
 
+import java.util.ArrayList;
+
 public class Map {
 	
 	Cell[][] map;
-	Ant[] antList;
+	ArrayList<Ant> antList;
+	int antMax;
+	
 	//CONSTRUCTORS
-	public Map(int width, int height, int antNum_in){//width=elements in each array, height=# of arrays
-		createAntList(antNum_in);
+	public Map(int width, int height){//width=elements in each array, height=# of arrays
+		antList=new ArrayList<Ant>();
 		map=new Cell[width][height];
 		Cell[] tempArray=new Cell[width];
 		for(int i=0;i<height;i++){
@@ -17,12 +21,17 @@ public class Map {
 		}
 	}
 	
-	//HELPER_METHODS
-	private void createAntList(int antNum){//creates a list of ants
-		antList=new Ant[antNum];
-		for(int i=0;i<antNum;i++){
-			antList[i]=new Ant();
+	//RUN_THIS_BITCH_METHODS
+	public void antColony(int antNum){
+		antMax=antNum;
+		/*
+
+		 */
+	}
+	//HELPER_METHOD
+	private void moveAnts(){
+		for(Ant ant:antList){
+			
 		}
 	}
-	
 }
