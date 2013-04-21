@@ -10,6 +10,8 @@ public class Cell {
 	//CONSTRUCTORS
 	public Cell(int x, int y){
 		pheromone=0;
+		cellType=0;
+		loc=new int[2];
 		loc[0]=x;
 		loc[1]=y;
 	}
@@ -21,6 +23,9 @@ public class Cell {
 	public int[] getLocation(){
 		return loc;
 	}
+	public int getType(){
+		return cellType;
+	}
 	
 	//SET_METHODS
 	
@@ -30,5 +35,11 @@ public class Cell {
 	}
 	public void decPheromone(int dec_in){
 		pheromone-=dec_in;
+	}
+	public void makeFoodSource(){
+		cellType=1;
+	}
+	public void makeNormalCell(){
+		cellType=0;
 	}
 }

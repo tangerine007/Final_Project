@@ -1,48 +1,57 @@
 package antColony;
 
+import java.util.ArrayList;
+
 public class Ant {
 
-	Cell[] path;
+	ArrayList<Cell> path;
 	Cell current;
-	boolean active;
 	
 	//CONSTRUCTORS
 	public Ant(){
 		current=null;
+		path=new ArrayList<Cell>();
 	}
 	
 	public Ant(Cell startLoc){
+		path=new ArrayList<Cell>();
 		current=startLoc;
-		
-		path=new Cell[1];
-		path[0]=current;
+		path.add(current);
 	}
 	
 	//GET_METHODS
 	public Cell getCurrent(){
 		return current;
 	}
-	public Cell[] getPath(){
+	public ArrayList<Cell> getPath(){
 		return path;
+	}
+	public Cell getPreviousCurrent(){
+		return path.get(path.size()-2);
 	}
 	
 	//SET_METHODS
 	public void setLoc(Cell startLoc){
 		current=startLoc;
-		
-		path=new Cell[1];
-		path[0]=current;
+		path.add(current);
 	}
 
 	//MUT_METHODS
 	public void move(Cell newCell){
 		current=newCell;
-		//can optimize this
-		Cell[] temp=path;
-		path=new Cell[temp.length+1];
-		for(int i=0;i<temp.length;i++){
-			path[i]=temp[i];
-		}
-		path[temp.length]=current;
+		path.add(current);
+	}
+	
+	//sends ant home, returns the path the ant took
+	public ArrayList<Cell> reset(Cell home){
+		current=home;
+		ArrayList<Cell> tempPath = path;
+		path.clear();
+		path.add(current);
+		return tempPath;
+	}
+	//each movement of the ant on it's way home (used to place pheromones one by one)
+	public Cell goHome(){
+		return path.remove(path.size()-1);
 	}
 }
