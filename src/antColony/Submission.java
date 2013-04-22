@@ -13,9 +13,9 @@ public class Submission {
 		////////////////////BELOW_HERE_IS_TIMED////////////////////////////////////
 		//max map is around 4500000 which takes ~1000 ms to populate. sqrt(4500000)~2121
 		//worst case scenario is ~10000 ms which occurs when # of food sources is very close to # of cells in map
-		int x=10;
-		int y=10;
-		Map map=new Map(x,y,x/2);//creates a map width=5, height=6, w/ 1 food source
+		int x=100;
+		int y=100;
+		Map map=new Map(x,y,1);//creates a map width=5, height=6, w/ 1 food source
 		map.antColony(1,1,map.getRandomCell());//runs ant colony optimization on this map using one ant (goes to finish and comes back one time)
 		////////////////////ABOVE_HERE_IS_TIMED////////////////////////////////////
 		

@@ -9,7 +9,7 @@ public class Cell {
 	
 	//CONSTRUCTORS
 	public Cell(int x, int y){
-		pheromone=0;
+		pheromone=1;
 		cellType=0;
 		loc=new int[2];
 		loc[0]=x;

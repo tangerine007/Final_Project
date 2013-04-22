@@ -56,8 +56,6 @@ public class Map {
 			Ant tempAnt= new Ant(start);
 			antList.add(tempAnt);
 			while(finishedAnts<=antMax){
-				//PRINT - prints out the location of the ant (x,y)
-				System.out.println("("+antList.get(0).getCurrent().getLocation()[0]+","+antList.get(0).getCurrent().getLocation()[1]+")");
 				//releases new ants into map based on counter specified
 				releaseCounter++;
 				if(releaseCounter>antRelease){
@@ -81,66 +79,67 @@ public class Map {
 	//HELPER_METHOD
 	private int moveAnts(){//moves ants, returns an int which is the number of ants who have found a food source
 		int[] lastMove = new int[2];
+		int[] currentLoc = new int[2];
 		ArrayList<Cell> possibleMoves=new ArrayList<Cell>();
 		ArrayList<Ant> tempFinishedAnts=new ArrayList<Ant>();
 		int tempFinishedAntsSize=0;
 		//***MIGHT NEED TO CHECK WHICH ONES ARE Y-AXIS AND X-AXIS IN MAP AND IN "lastMove[]"***//
 		for(Ant ant:antList){
 			//previous direction "lastMove[]" = current position - position before previous e.g. [1,1]-[0,0]=[1,1] (came from southWest)
+			currentLoc[0]=ant.getCurrent().getLocation()[0];
+			currentLoc[1]=ant.getCurrent().getLocation()[1];
 			if(ant.getPath().size()<2){
-				lastMove[0]=ant.getCurrent().getLocation()[0];
-				lastMove[1]=ant.getCurrent().getLocation()[1];
-				possibleMoves.add(map[lastMove[1]+1][lastMove[0]]);//N
-				possibleMoves.add(map[lastMove[1]-1][lastMove[0]]);//S
-				possibleMoves.add(map[lastMove[1]][lastMove[0]-1]);//W
-				possibleMoves.add(map[lastMove[1]][lastMove[0]+1]);//E
-				possibleMoves.add(map[lastMove[1]-1][lastMove[0]-1]);//SW
-				possibleMoves.add(map[lastMove[1]-1][lastMove[0]+1]);//SE
-				possibleMoves.add(map[lastMove[1]+1][lastMove[0]-1]);//NW
-				possibleMoves.add(map[lastMove[1]+1][lastMove[0]+1]);//NE
-				//PSUEDO_CODE
-					//randomly select one with pheromones taken into concideration
-				//END_PSUEDO_CODE
+				possibleMoves.add(map[currentLoc[1]+1][currentLoc[0]]);//N
+				possibleMoves.add(map[currentLoc[1]-1][currentLoc[0]]);//S
+				possibleMoves.add(map[currentLoc[1]][currentLoc[0]-1]);//W
+				possibleMoves.add(map[currentLoc[1]][currentLoc[0]+1]);//E
+				possibleMoves.add(map[currentLoc[1]-1][currentLoc[0]-1]);//SW
+				possibleMoves.add(map[currentLoc[1]-1][currentLoc[0]+1]);//SE
+				possibleMoves.add(map[currentLoc[1]+1][currentLoc[0]-1]);//NW
+				possibleMoves.add(map[currentLoc[1]+1][currentLoc[0]+1]);//NE
 			}else{
 				lastMove[0]=ant.getCurrent().getLocation()[0]-ant.getPreviousCurrent().getLocation()[0];
 				lastMove[1]=ant.getCurrent().getLocation()[1]-ant.getPreviousCurrent().getLocation()[1];
 				//if proceeding in the same direction will put the ant out of bounds...
-				if(ant.getCurrent().getLocation()[0]+lastMove[0]<0 || ant.getCurrent().getLocation()[1]+lastMove[1]<0 || ant.getCurrent().getLocation()[0]+lastMove[0]>width || ant.getCurrent().getLocation()[1]+lastMove[1]>height){
+				if(currentLoc[0]+lastMove[0]<0 || currentLoc[1]+lastMove[1]<0 || currentLoc[0]+lastMove[0]>width-1 || currentLoc[1]+lastMove[1]>height-1){
 					//PSUEDO_CODE
-						//ant dies? (remove ant)
-						//ant reverses direction and goes in that direction? (some corner cases will result in infinite loop)
 						//ignore the middle case and look at the side cases, choose between them. If none are acceptable then reverse direction.
 					//END_PSUEDO_CODE
+					possibleMoves.add(map[currentLoc[1]-lastMove[1]][currentLoc[0]-lastMove[0]]);
+					//PSUEDO-REPLACE WITH THIS POLICY ->ignore the middle case and look at the side cases, choose between them. If none are acceptable then reverse direction.
 				}else{
 					//populate possible moves with 3 adjacent cells in direction you are going in if they are on the ap
 					//randomly select one with pheromones taken into concideration
-					if(lastMove[1]==0){//if the last move came from up or down
-						possibleMoves.add(map[lastMove[1]][lastMove[0]]);//continueing along the same direction
-						possibleMoves.add(map[lastMove[1]][lastMove[0]+1]);//changing the x-coordinate cell left
-						possibleMoves.add(map[lastMove[1]][lastMove[0]-1]);//changing the x-coordinate cell right
-					}else if(lastMove[0]==0){//if the last move came from left or right
-						possibleMoves.add(map[lastMove[1]][lastMove[0]]);//continueing along the same direction
-						possibleMoves.add(map[lastMove[1]+1][lastMove[0]]);//changing the x-coordinate cell left
-						possibleMoves.add(map[lastMove[1]-1][lastMove[0]]);//changing the x-coordinate cell right
+					if(lastMove[0]==0){//if the last move came from up or down
+						possibleMoves.add(map[currentLoc[1]+lastMove[1]][currentLoc[0]]);//continueing along the same direction
+						possibleMoves.add(map[currentLoc[1]+lastMove[1]][currentLoc[0]+1]);//changing the x-coordinate cell left
+						possibleMoves.add(map[currentLoc[1]+lastMove[1]][currentLoc[0]-1]);//changing the x-coordinate cell right
+					}else if(lastMove[1]==0){//if the last move came from left or right
+						possibleMoves.add(map[currentLoc[1]][currentLoc[0]+lastMove[0]]);//continueing along the same direction
+						possibleMoves.add(map[currentLoc[1]+1][currentLoc[0]+lastMove[0]]);//changing the x-coordinate cell left
+						possibleMoves.add(map[currentLoc[1]-1][currentLoc[0]+lastMove[0]]);//changing the x-coordinate cell right
 					}else{//if the last move came from a diagonal
-						possibleMoves.add(map[lastMove[1]][lastMove[0]]);//continueing along the same diagonal
-						possibleMoves.add(map[lastMove[1]][1-lastMove[0]]);//changing the x-coordinate cell
-						possibleMoves.add(map[1-lastMove[1]][lastMove[0]]);//changing the y-coordinate cell
+						possibleMoves.add(map[currentLoc[1]+lastMove[1]][currentLoc[0]+lastMove[0]]);//continueing along the same diagonal
+						possibleMoves.add(map[currentLoc[1]][currentLoc[0]+lastMove[0]]);//changing the x-coordinate cell
+						possibleMoves.add(map[currentLoc[1]+lastMove[1]][currentLoc[0]]);//changing the y-coordinate cell
 					}
 				}
-				//PSUEDO_CODE
-					//RANDOMLY CHOOSE CELL FROM "possibleMoves[]" TAKING PHEROMONES INTO CONCIDERATION
-						//->This may require an additional array for normalizing the values and choosing from the cells
-					//Move the ant to the new cell using the ant's move() method
-					//Add the ant to the "tempFinishedAnts[]" ArrayList
-					//Delete the ant from the "antList[]" ArrayList
-				//END_PSUEDO_CODE
 			}
 			//PSUEDO_CODE
-				//Add the "tempFinishedAnts[]" ArrayList to the global "finishedAnts[]" ArrayList
+				//RANDOMLY CHOOSE CELL FROM "possibleMoves[]" TAKING PHEROMONES INTO CONCIDERATION
+					//->This may require an additional array for normalizing the values and choosing from the cells
 			//END_PSUEDO_CODE
+			
+			//TEST_MOVE//
+			ant.move(possibleMoves.get((int) (Math.random()*possibleMoves.size())));
+			if(ant.getCurrent().getType()==1){
+				tempFinishedAnts.add(ant);
+			}
+			possibleMoves.clear();
 		}
+		antList.removeAll(tempFinishedAnts);
 		tempFinishedAntsSize=tempFinishedAnts.size();
+		finishedAnts.addAll(tempFinishedAnts);
 		return tempFinishedAntsSize;
 	}
 	private void releasePheromones(){
