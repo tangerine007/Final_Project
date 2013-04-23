@@ -10,9 +10,13 @@ public class Map {
 	int antMax;
 	int width;
 	int height;
+	int ANT_COUNTER;//counts how many ants have entered the system
+	int BEST_ANT_MOVEMENTS;//current least number of movements an ant has taken to reach a food source
 	
 	//CONSTRUCTORS
 	public Map(int width_in, int height_in,int foodSource_in){//width=elements in each array, height=# of arrays
+		ANT_COUNTER=1;
+		BEST_ANT_MOVEMENTS=1000000000;
 		width=width_in;
 		height=height_in;
 		antList=new ArrayList<Ant>();
@@ -48,6 +52,25 @@ public class Map {
 	public Cell getCell(int x, int y){
 		return map[y][x];
 	}
+	public int getAntCounter(){
+		return ANT_COUNTER;
+	}
+	public int getBestAntMovements(){
+		return BEST_ANT_MOVEMENTS;
+	}
+	//CLEAR_ALL
+	public void resetAll(){
+		for(int i=0;i<map.length;i++){
+			for(int j=0;j<map[i].length;j++){
+				map[i][j].setPheromone(1);
+			}
+		}
+		antList.clear();
+		finishedAnts.clear();
+		ANT_COUNTER=1;
+		BEST_ANT_MOVEMENTS=1000000000;
+	}
+	
 	//RUN_THIS_BITCH_METHODS
 	public void antColony(int antMax_in,int antRelease_in,Cell start,int pheromoneLvl_in){
 		antMax=antMax_in;//number of ants in the system
@@ -61,6 +84,7 @@ public class Map {
 				//releases new ants into map based on counter specified
 				releaseCounter++;
 				if(releaseCounter>antRelease){
+					ANT_COUNTER++;
 					antList.add(new Ant(start));
 					releaseCounter=0;
 				}
@@ -159,6 +183,12 @@ public class Map {
 			}
 			possibleMoves.clear();
 		}
+		for(Ant bestAnt: tempFinishedAnts){
+			if(bestAnt.getPath().size()<BEST_ANT_MOVEMENTS){
+				BEST_ANT_MOVEMENTS=bestAnt.getPath().size();
+				bestAnt.makeSpecial();
+			}
+		}
 		antList.removeAll(tempFinishedAnts);
 		finishedAnts.addAll(tempFinishedAnts);
 	}
@@ -179,7 +209,7 @@ public class Map {
 				tempFinishedAnts.add(ant);
 				done++;
 			}else{
-				ant.getPath().get(ant.getPath().size()-1).incPheromone(pheromoneLvl);
+				ant.getPath().get(ant.getPath().size()-1).incPheromone(pheromoneLvl*ant.getSpecial());
 				ant.getPath().remove(ant.getPath().get(ant.getPath().size()-1));
 			}
 		}

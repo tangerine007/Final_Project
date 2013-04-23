@@ -6,17 +6,20 @@ public class Ant {
 
 	ArrayList<Cell> path;
 	Cell current;
+	int special;
 	
 	//CONSTRUCTORS
 	public Ant(){
 		current=null;
 		path=new ArrayList<Cell>();
+		special=1;
 	}
 	
 	public Ant(Cell startLoc){
 		path=new ArrayList<Cell>();
 		current=startLoc;
 		path.add(current);
+		special=1;
 	}
 	
 	//GET_METHODS
@@ -29,6 +32,9 @@ public class Ant {
 	public Cell getPreviousCurrent(){
 		return path.get(path.size()-2);
 	}
+	public int getSpecial(){
+		return special;
+	}
 	
 	//SET_METHODS
 	public void setLoc(Cell startLoc){
@@ -40,6 +46,9 @@ public class Ant {
 	public void move(Cell newCell){
 		current=newCell;
 		path.add(current);
+	}
+	public void makeSpecial(){
+		special=5;
 	}
 	
 	//sends ant home, returns the path the ant took

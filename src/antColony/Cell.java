@@ -28,7 +28,9 @@ public class Cell {
 	}
 	
 	//SET_METHODS
-	
+	public void setPheromone(int pheromone_in){
+		pheromone=pheromone_in;
+	}
 	///MUT_METHODS
 	public void incPheromone(int inc_in){
 		pheromone+=inc_in;
