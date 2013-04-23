@@ -16,7 +16,13 @@ public class Submission {
 		int x=100;
 		int y=100;
 		Map map=new Map(x,y,1);//creates a map width=5, height=6, w/ 1 food source
-		map.antColony(1,1,map.getRandomCell());//runs ant colony optimization on this map using one ant (goes to finish and comes back one time)
+		Cell start= map.getCell(1, 1); //random Cell = map.getRandomCell();
+		//makes sure that the start location is not on the edge of the map (simplifies the movement of the ants)
+		while(start.getLocation()[0]==0 || start.getLocation()[1]==0 || start.getLocation()[0]==x-1 || start.getLocation()[1]==y-1){
+			start = map.getRandomCell();
+		}
+		//runs ant colony optimization on this map using one ant (goes to finish and comes back one time) 
+		map.antColony(100,10,start,10);//how many ants need to finish, release new ant after x moves, start location, # pheromones released
 		////////////////////ABOVE_HERE_IS_TIMED////////////////////////////////////
 		
 		

@@ -31,7 +31,7 @@ public class Map {
 			System.out.println("REMAKE MAP, TOO MANY FOOD SOURCES SPECIFIED!");
 		}else{
 			while(foodNum<foodSource_in){
-				Cell tempCell=getRandomCell();
+				Cell tempCell=map[height-1][width-1];//getRandomCell();//TEST
 				
 				if(tempCell.getType()==0){
 					foodNum++;
@@ -45,9 +45,11 @@ public class Map {
 	public Cell getRandomCell(){
 		return map[(int) (Math.random()*(height-1))][(int) (Math.random()*(width-1))];
 	}
-	
+	public Cell getCell(int x, int y){
+		return map[y][x];
+	}
 	//RUN_THIS_BITCH_METHODS
-	public void antColony(int antMax_in,int antRelease_in,Cell start){
+	public void antColony(int antMax_in,int antRelease_in,Cell start,int pheromoneLvl_in){
 		antMax=antMax_in;//number of ants in the system
 		int antRelease=antRelease_in;//how many moves do you want to go through before you release another ant
 		int releaseCounter=0;
@@ -62,13 +64,10 @@ public class Map {
 					antList.add(new Ant(start));
 					releaseCounter=0;
 				}
-				finishedAnts+=moveAnts();//moves all active ants (adds the number of finished ants to the "finishedAnts" counter)
+				moveAnts();//moves all active ants (adds the number of finished ants to the "finishedAnts" counter)
 				if(finishedAnts<=antMax){
-					//PSUEDO_CODE
-						//ADD helper method for removing pheromones from the map
-							//->Maybe just go through the entire map and remove 1 pheromone from every cell that has at least one in it
-						//ADD helper method for going through the "finishedAnts[]" ArrayList and adding pheromones to the appropriate cells
-					//END_PSUEDO_CODE
+					decayPheromones();
+					finishedAnts+=releasePheromones(pheromoneLvl_in);
 				}
 			}
 		}else{
@@ -76,13 +75,15 @@ public class Map {
 		}
 		
 	}
-	//HELPER_METHOD
-	private int moveAnts(){//moves ants, returns an int which is the number of ants who have found a food source
+	//HELPER_METHODS
+	private void moveAnts(){//moves ants, returns an int which is the number of ants who have found a food source
 		int[] lastMove = new int[2];
 		int[] currentLoc = new int[2];
 		ArrayList<Cell> possibleMoves=new ArrayList<Cell>();
 		ArrayList<Ant> tempFinishedAnts=new ArrayList<Ant>();
-		int tempFinishedAntsSize=0;
+		int[] chooseMoveList=null;
+		int totalPheromones=0;
+		double pheromoneChooser=Math.random();
 		//***MIGHT NEED TO CHECK WHICH ONES ARE Y-AXIS AND X-AXIS IN MAP AND IN "lastMove[]"***//
 		for(Ant ant:antList){
 			//previous direction "lastMove[]" = current position - position before previous e.g. [1,1]-[0,0]=[1,1] (came from southWest)
@@ -129,20 +130,60 @@ public class Map {
 				//RANDOMLY CHOOSE CELL FROM "possibleMoves[]" TAKING PHEROMONES INTO CONCIDERATION
 					//->This may require an additional array for normalizing the values and choosing from the cells
 			//END_PSUEDO_CODE
+			chooseMoveList=new int[possibleMoves.size()];
+			totalPheromones=0;
+			for(int i=0;i<possibleMoves.size();i++){
+				chooseMoveList[i]=possibleMoves.get(i).getPheromone()+totalPheromones;
+				totalPheromones+=possibleMoves.get(i).getPheromone();
+			}
+			//for(int i=0;i<possibleMoves.size();i++){//normalizes values
+				//chooseMoveList[i]/=totalPheromones;
+			//}
 			
+			pheromoneChooser=Math.random()*totalPheromones;
+			int count=0;
+			Cell chosenCell=possibleMoves.get(0);
+			while(pheromoneChooser>chooseMoveList[count]){
+				chosenCell=possibleMoves.get(count);
+				count++;
+			}
+			
+			ant.move(chosenCell);
+			//ant.move(possibleMoves.get((int) (Math.random()*possibleMoves.size())));
 			//TEST_MOVE//
-			ant.move(possibleMoves.get((int) (Math.random()*possibleMoves.size())));
+			//ant.move(possibleMoves.get((int) (Math.random()*possibleMoves.size())));
+			
+			//checks if ant is at a food source
 			if(ant.getCurrent().getType()==1){
 				tempFinishedAnts.add(ant);
 			}
 			possibleMoves.clear();
 		}
 		antList.removeAll(tempFinishedAnts);
-		tempFinishedAntsSize=tempFinishedAnts.size();
 		finishedAnts.addAll(tempFinishedAnts);
-		return tempFinishedAntsSize;
 	}
-	private void releasePheromones(){
-		
+	private void decayPheromones(){
+		for(int i=0;i<map.length;i++){
+			for(int j=0;j<map[i].length;j++){
+				if(map[i][j].getPheromone()>1){
+					map[i][j].decPheromone(1);//decreases pheromones of all cells by 1 if it has at >1 pheromone in it
+				}
+			}
+		}
+	}
+	private int releasePheromones(int pheromoneLvl){
+		int done=0;//# of finished ants
+		ArrayList<Ant> tempFinishedAnts=new ArrayList<Ant>();
+		for(Ant ant:finishedAnts){
+			if(ant.getPath().isEmpty()){
+				tempFinishedAnts.add(ant);
+				done++;
+			}else{
+				ant.getPath().get(ant.getPath().size()-1).incPheromone(pheromoneLvl);
+				ant.getPath().remove(ant.getPath().get(ant.getPath().size()-1));
+			}
+		}
+		finishedAnts.removeAll(tempFinishedAnts);
+		return done;
 	}
 }
