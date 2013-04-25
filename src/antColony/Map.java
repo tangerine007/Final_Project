@@ -12,9 +12,13 @@ public class Map {
 	int height;
 	int ANT_COUNTER;//counts how many ants have entered the system
 	int BEST_ANT_MOVEMENTS;//current least number of movements an ant has taken to reach a food source
+	int specialAntMult;//the multiplier for the number of pheromones a special ant will leave compared to a regular ant
+	GUI mapGUI;
 	
 	//CONSTRUCTORS
 	public Map(int width_in, int height_in,int foodSource_in){//width=elements in each array, height=# of arrays
+		mapGUI=new GUI(height_in,width_in);//GUI
+		specialAntMult=1;
 		ANT_COUNTER=1;
 		BEST_ANT_MOVEMENTS=1000000000;
 		width=width_in;
@@ -35,8 +39,8 @@ public class Map {
 			System.out.println("REMAKE MAP, TOO MANY FOOD SOURCES SPECIFIED!");
 		}else{
 			while(foodNum<foodSource_in){
-				Cell tempCell=map[height-1][width-1];//getRandomCell();//TEST
-				
+				Cell tempCell=map[height/4][width/4];//getRandomCell();//TEST
+				mapGUI.makeFood(tempCell.getLocation()[1], tempCell.getLocation()[0]);//GUI
 				if(tempCell.getType()==0){
 					foodNum++;
 					tempCell.makeFoodSource();
@@ -72,26 +76,34 @@ public class Map {
 	}
 	
 	//RUN_THIS_BITCH_METHODS
-	public void antColony(int antMax_in,int antRelease_in,Cell start,int pheromoneLvl_in){
+	public void antColony(int antMax_in,int antRelease_in,Cell start,int pheromoneLvl_in,int antColonySize_in,int specialAntMult_in,int delay_in){
+		mapGUI.makeStart(start.getLocation()[1], start.getLocation()[0]);//GUI
+		specialAntMult=specialAntMult_in;
 		antMax=antMax_in;//number of ants in the system
 		int antRelease=antRelease_in;//how many moves do you want to go through before you release another ant
 		int releaseCounter=0;
-		int finishedAnts=0;//counts the number of ants who have completed their journey
+		int finishedAntNum=0;//counts the number of ants who have completed their journey
 		if(antMax>=1){
 			Ant tempAnt= new Ant(start);
 			antList.add(tempAnt);
-			while(finishedAnts<=antMax){
+			while(finishedAntNum<=antMax){
 				//releases new ants into map based on counter specified
 				releaseCounter++;
-				if(releaseCounter>antRelease){
+				if(releaseCounter>antRelease && antList.size()+finishedAnts.size()<antColonySize_in){
 					ANT_COUNTER++;
 					antList.add(new Ant(start));
 					releaseCounter=0;
 				}
+				try {
+					Thread.sleep(delay_in);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				moveAnts();//moves all active ants (adds the number of finished ants to the "finishedAnts" counter)
-				if(finishedAnts<=antMax){
+				if(finishedAntNum<=antMax){
 					decayPheromones();
-					finishedAnts+=releasePheromones(pheromoneLvl_in);
+					finishedAntNum+=releasePheromones(pheromoneLvl_in);
 				}
 			}
 		}else{
@@ -131,6 +143,8 @@ public class Map {
 						//ignore the middle case and look at the side cases, choose between them. If none are acceptable then reverse direction.
 					//END_PSUEDO_CODE
 					possibleMoves.add(map[currentLoc[1]-lastMove[1]][currentLoc[0]-lastMove[0]]);
+					possibleMoves.add(map[currentLoc[1]-lastMove[1]][currentLoc[0]-lastMove[0]]);
+					possibleMoves.add(map[currentLoc[1]-lastMove[1]][currentLoc[0]-lastMove[0]]);
 					//PSUEDO-REPLACE WITH THIS POLICY ->ignore the middle case and look at the side cases, choose between them. If none are acceptable then reverse direction.
 				}else{
 					//populate possible moves with 3 adjacent cells in direction you are going in if they are on the ap
@@ -150,10 +164,6 @@ public class Map {
 					}
 				}
 			}
-			//PSUEDO_CODE
-				//RANDOMLY CHOOSE CELL FROM "possibleMoves[]" TAKING PHEROMONES INTO CONCIDERATION
-					//->This may require an additional array for normalizing the values and choosing from the cells
-			//END_PSUEDO_CODE
 			chooseMoveList=new int[possibleMoves.size()];
 			totalPheromones=0;
 			for(int i=0;i<possibleMoves.size();i++){
@@ -166,13 +176,22 @@ public class Map {
 			
 			pheromoneChooser=Math.random()*totalPheromones;
 			int count=0;
-			Cell chosenCell=possibleMoves.get(0);
+			Cell chosenCell=possibleMoves.get(2);//idk why there was an issue here at one point....
 			while(pheromoneChooser>chooseMoveList[count]){
 				chosenCell=possibleMoves.get(count);
 				count++;
 			}
 			
 			ant.move(chosenCell);
+			
+			if(ant.getCurrent().getType()==0){
+				mapGUI.removeAnt(ant.getPreviousCurrent().getLocation()[1],ant.getPreviousCurrent().getLocation()[0]);
+				mapGUI.putAnt(chosenCell.getLocation()[1],chosenCell.getLocation()[0]);
+
+			}
+			
+			
+			
 			//ant.move(possibleMoves.get((int) (Math.random()*possibleMoves.size())));
 			//TEST_MOVE//
 			//ant.move(possibleMoves.get((int) (Math.random()*possibleMoves.size())));
@@ -184,9 +203,9 @@ public class Map {
 			possibleMoves.clear();
 		}
 		for(Ant bestAnt: tempFinishedAnts){
-			if(bestAnt.getPath().size()<BEST_ANT_MOVEMENTS){
+			if(bestAnt.getPath().size()<=BEST_ANT_MOVEMENTS){
 				BEST_ANT_MOVEMENTS=bestAnt.getPath().size();
-				bestAnt.makeSpecial();
+				bestAnt.makeSpecial(specialAntMult);
 			}
 		}
 		antList.removeAll(tempFinishedAnts);
@@ -196,6 +215,7 @@ public class Map {
 		for(int i=0;i<map.length;i++){
 			for(int j=0;j<map[i].length;j++){
 				if(map[i][j].getPheromone()>1){
+					mapGUI.decPheromone(i, j);
 					map[i][j].decPheromone(1);//decreases pheromones of all cells by 1 if it has at >1 pheromone in it
 				}
 			}
@@ -210,6 +230,11 @@ public class Map {
 				done++;
 			}else{
 				ant.getPath().get(ant.getPath().size()-1).incPheromone(pheromoneLvl*ant.getSpecial());
+				if(ant.getPath().get(ant.getPath().size()-1).getType()==0){
+					mapGUI.backTrack(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0]);
+				}
+				mapGUI.incPheromone(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0], pheromoneLvl*ant.getSpecial());
+				
 				ant.getPath().remove(ant.getPath().get(ant.getPath().size()-1));
 			}
 		}

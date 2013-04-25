@@ -47,8 +47,8 @@ public class Ant {
 		current=newCell;
 		path.add(current);
 	}
-	public void makeSpecial(){
-		special=5;
+	public void makeSpecial(int special_in){
+		special=special_in;
 	}
 	
 	//sends ant home, returns the path the ant took
