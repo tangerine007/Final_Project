@@ -221,11 +221,13 @@ public class Map {
 			if(chosenCell.getType()!=2){
 				ant.move(chosenCell);
 				if(ant.getCurrent().getType()==0){
-					mapGUI.removeAnt(ant.getPreviousCurrent().getLocation()[1],ant.getPreviousCurrent().getLocation()[0]);
 					mapGUI.putAnt(ant.getCurrent().getLocation()[1],ant.getCurrent().getLocation()[0]);
+					mapGUI.removeAnt(ant.getPreviousCurrent().getLocation()[1],ant.getPreviousCurrent().getLocation()[0]);
 				}
 			}else{
 				ant.move(map[currentLoc[1]-lastMove[1]][currentLoc[0]-lastMove[0]]);
+				mapGUI.removeAnt(ant.getPreviousCurrent().getLocation()[1],ant.getPreviousCurrent().getLocation()[0]);
+				mapGUI.putAnt(ant.getCurrent().getLocation()[1],ant.getCurrent().getLocation()[0]);
 				//tempList.add(ant);
 			}
 			
@@ -288,7 +290,6 @@ public class Map {
 		return done;
 	}
 	private void releaseAll(int pheromoneLvl){
-		antList.clear();
 		Ant ant=finishedAnts.get(0);
 			while(!ant.getPath().isEmpty()){
 				ant.getPath().get(ant.getPath().size()-1).incPheromone(pheromoneLvl*ant.getSpecial());
@@ -299,6 +300,12 @@ public class Map {
 				
 				ant.getPath().remove(ant.getPath().get(ant.getPath().size()-1));
 			}
+			for(Ant allAnts:antList){
+				if(allAnts.getCurrent().getType()==0){
+					mapGUI.removeAnt(allAnts.getCurrent().getLocation()[1], allAnts.getCurrent().getLocation()[0]);
+				}
+			}
+		antList.clear();
 		finishedAnts.clear();
 	}
 }

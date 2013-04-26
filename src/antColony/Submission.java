@@ -15,8 +15,8 @@ public class Submission {
 		//MAP_INFO - info about spawning the map
 			//max map is around 4500000 which takes ~1000 ms to populate. sqrt(4500000)~2121
 			//worst case scenario is ~10000 ms which occurs when # of food sources is very close to # of cells in map
-			int mapWidth=90;//the map will be populated with this many cells on the X-axis
-			int mapHeight=75;//the map will be populated with this many cells on the Y-axis
+			int mapWidth=40;//the map will be populated with this many cells on the X-axis
+			int mapHeight=40;//the map will be populated with this many cells on the Y-axis
 			int foodSources=1;//number of food sources on the map (must be less than available spaces on map)
 		
 		//COLONY_INFO - info about the way that the algorithm operates
@@ -32,7 +32,7 @@ public class Submission {
 			int antColonySize=100;//The ant colony consists of this many ants, once this only this many ants can exist in the system at one time
 			
 		//GUI_CONTROL
-			int delay=100;//number of miliseconds between each antMove();
+			int delay=60;//number of miliseconds between each antMove();
 		///////////////*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*/////////////////////////////
 
 			
