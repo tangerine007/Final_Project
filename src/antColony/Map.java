@@ -87,21 +87,11 @@ public class Map {
 			Ant tempAnt= new Ant(start);
 			antList.add(tempAnt);
 			while(finishedAntNum<=antMax){
-				antList.add(new Ant(start));
-				if(finishedAnts.isEmpty()){
+				//if(finishedAnts.isEmpty()){
 				//releases new ants into map based on counter specified
 				releaseCounter++;
 				if(releaseCounter>antRelease && antList.size()+finishedAnts.size()<antColonySize_in){
 					ANT_COUNTER++;
-					antList.add(new Ant(start));
-					antList.add(new Ant(start));
-					antList.add(new Ant(start));
-					antList.add(new Ant(start));
-					antList.add(new Ant(start));
-					antList.add(new Ant(start));
-					antList.add(new Ant(start));
-					antList.add(new Ant(start));
-					antList.add(new Ant(start));
 					antList.add(new Ant(start));
 					releaseCounter=0;
 				}
@@ -114,14 +104,13 @@ public class Map {
 				moveAnts();//moves all active ants (adds the number of finished ants to the "finishedAnts" counter)
 				if(finishedAntNum<=antMax){
 					decayPheromones();
-					//finishedAntNum+=releasePheromones(pheromoneLvl_in);
+					finishedAntNum+=releasePheromones(pheromoneLvl_in);
 				}
-				}
-				else{
+				/*}else{
 					releaseAll(pheromoneLvl_in);
 					mapGUI.incFinished();
 					finishedAntNum++;
-				}
+				}*/
 			}
 		}else{
 			System.out.println("One or more ants must be chosen to be in system!");
@@ -245,6 +234,7 @@ public class Map {
 		for(Ant ant:finishedAnts){
 			if(ant.getPath().isEmpty()){
 				tempFinishedAnts.add(ant);
+				mapGUI.incFinished();
 				done++;
 			}else{
 				ant.getPath().get(ant.getPath().size()-1).incPheromone(pheromoneLvl*ant.getSpecial());
