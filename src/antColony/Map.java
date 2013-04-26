@@ -87,10 +87,21 @@ public class Map {
 			Ant tempAnt= new Ant(start);
 			antList.add(tempAnt);
 			while(finishedAntNum<=antMax){
+				antList.add(new Ant(start));
+				if(finishedAnts.isEmpty()){
 				//releases new ants into map based on counter specified
 				releaseCounter++;
 				if(releaseCounter>antRelease && antList.size()+finishedAnts.size()<antColonySize_in){
 					ANT_COUNTER++;
+					antList.add(new Ant(start));
+					antList.add(new Ant(start));
+					antList.add(new Ant(start));
+					antList.add(new Ant(start));
+					antList.add(new Ant(start));
+					antList.add(new Ant(start));
+					antList.add(new Ant(start));
+					antList.add(new Ant(start));
+					antList.add(new Ant(start));
 					antList.add(new Ant(start));
 					releaseCounter=0;
 				}
@@ -103,7 +114,13 @@ public class Map {
 				moveAnts();//moves all active ants (adds the number of finished ants to the "finishedAnts" counter)
 				if(finishedAntNum<=antMax){
 					decayPheromones();
-					finishedAntNum+=releasePheromones(pheromoneLvl_in);
+					//finishedAntNum+=releasePheromones(pheromoneLvl_in);
+				}
+				}
+				else{
+					releaseAll(pheromoneLvl_in);
+					mapGUI.incFinished();
+					finishedAntNum++;
 				}
 			}
 		}else{
@@ -117,9 +134,8 @@ public class Map {
 		int[] currentLoc = new int[2];
 		ArrayList<Cell> possibleMoves=new ArrayList<Cell>();
 		ArrayList<Ant> tempFinishedAnts=new ArrayList<Ant>();
-		int[] chooseMoveList=null;
+		double[] chooseMoveList=null;
 		int totalPheromones=0;
-		double pheromoneChooser=Math.random();
 		//***MIGHT NEED TO CHECK WHICH ONES ARE Y-AXIS AND X-AXIS IN MAP AND IN "lastMove[]"***//
 		for(Ant ant:antList){
 			//previous direction "lastMove[]" = current position - position before previous e.g. [1,1]-[0,0]=[1,1] (came from southWest)
@@ -164,30 +180,32 @@ public class Map {
 					}
 				}
 			}
-			chooseMoveList=new int[possibleMoves.size()];
+			
+			chooseMoveList=new double[possibleMoves.size()];
 			totalPheromones=0;
 			for(int i=0;i<possibleMoves.size();i++){
-				chooseMoveList[i]=possibleMoves.get(i).getPheromone()+totalPheromones;
 				totalPheromones+=possibleMoves.get(i).getPheromone();
+				chooseMoveList[i]=totalPheromones;
 			}
-			//for(int i=0;i<possibleMoves.size();i++){//normalizes values
-				//chooseMoveList[i]/=totalPheromones;
-			//}
+
+			double pheromoneChooser=Math.random()*totalPheromones;
 			
-			pheromoneChooser=Math.random()*totalPheromones;
-			int count=0;
-			Cell chosenCell=possibleMoves.get(2);//idk why there was an issue here at one point....
-			while(pheromoneChooser>chooseMoveList[count]){
-				chosenCell=possibleMoves.get(count);
-				count++;
+			Cell chosenCell=possibleMoves.get((int) Math.floor(Math.random()*possibleMoves.size()));//idk why there was an issue here at one point....
+			
+			double maxVal=1000000;
+			for(int i=0;i<possibleMoves.size();i++){
+				chooseMoveList[i]= chooseMoveList[i]-pheromoneChooser;
+				if(chooseMoveList[i]>=0 && chooseMoveList[i]<maxVal){
+					chosenCell=possibleMoves.get(i);
+					maxVal=chooseMoveList[i];
+				}
 			}
-			
+
 			ant.move(chosenCell);
 			
 			if(ant.getCurrent().getType()==0){
 				mapGUI.removeAnt(ant.getPreviousCurrent().getLocation()[1],ant.getPreviousCurrent().getLocation()[0]);
 				mapGUI.putAnt(chosenCell.getLocation()[1],chosenCell.getLocation()[0]);
-
 			}
 			
 			
@@ -240,5 +258,19 @@ public class Map {
 		}
 		finishedAnts.removeAll(tempFinishedAnts);
 		return done;
+	}
+	private void releaseAll(int pheromoneLvl){
+		antList.clear();
+		Ant ant=finishedAnts.get(0);
+			while(!ant.getPath().isEmpty()){
+				ant.getPath().get(ant.getPath().size()-1).incPheromone(pheromoneLvl*ant.getSpecial());
+				if(ant.getPath().get(ant.getPath().size()-1).getType()==0){
+					mapGUI.backTrack(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0]);
+				}
+				mapGUI.incPheromone(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0], pheromoneLvl*ant.getSpecial());
+				
+				ant.getPath().remove(ant.getPath().get(ant.getPath().size()-1));
+			}
+		finishedAnts.remove(ant);
 	}
 }
