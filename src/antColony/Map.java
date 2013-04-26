@@ -80,6 +80,7 @@ public class Map {
 		mapGUI.makeStart(start.getLocation()[1], start.getLocation()[0]);//GUI
 		specialAntMult=specialAntMult_in;
 		antMax=antMax_in;//number of ants in the system
+		
 		int antRelease=antRelease_in;//how many moves do you want to go through before you release another ant
 		int releaseCounter=0;
 		int finishedAntNum=0;//counts the number of ants who have completed their journey
