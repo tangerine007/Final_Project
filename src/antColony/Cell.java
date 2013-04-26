@@ -38,6 +38,9 @@ public class Cell {
 	public void decPheromone(int dec_in){
 		pheromone-=dec_in;
 	}
+	public void makeObsticle(){
+		cellType=2;
+	}
 	public void makeFoodSource(){
 		cellType=1;
 	}

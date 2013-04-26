@@ -14,6 +14,7 @@ public class Map {
 	int BEST_ANT_MOVEMENTS;//current least number of movements an ant has taken to reach a food source
 	int specialAntMult;//the multiplier for the number of pheromones a special ant will leave compared to a regular ant
 	GUI mapGUI;
+	Cell start_global;
 	
 	//CONSTRUCTORS
 	public Map(int width_in, int height_in,int foodSource_in){//width=elements in each array, height=# of arrays
@@ -38,13 +39,22 @@ public class Map {
 		if(width*height<foodSource_in){
 			System.out.println("REMAKE MAP, TOO MANY FOOD SOURCES SPECIFIED!");
 		}else{
+			Cell tempCell=map[height/8][width/8];//getRandomCell();//TEST
 			while(foodNum<foodSource_in){
-				Cell tempCell=map[height/8][width/8];//getRandomCell();//TEST
 				mapGUI.makeFood(tempCell.getLocation()[1], tempCell.getLocation()[0]);//GUI
 				if(tempCell.getType()==0){
 					foodNum++;
 					tempCell.makeFoodSource();
 				}
+			}
+			
+			for(int i=0;i<width*height/5;i++){
+				tempCell=getRandomCell();
+				if(tempCell.getType()==0){
+					tempCell.makeObsticle();
+					mapGUI.makeObsticle(tempCell.getLocation()[1],tempCell.getLocation()[0]);
+				}	
+				
 			}
 		}
 	}
@@ -77,6 +87,7 @@ public class Map {
 	
 	//RUN_THIS_BITCH_METHODS
 	public void antColony(int antMax_in,int antRelease_in,Cell start,int pheromoneLvl_in,int antColonySize_in,int specialAntMult_in,int delay_in){
+		start_global= start;
 		mapGUI.makeStart(start.getLocation()[1], start.getLocation()[0]);//GUI
 		specialAntMult=specialAntMult_in;
 		antMax=antMax_in;//number of ants in the system
@@ -140,6 +151,7 @@ public class Map {
 		int[] currentLoc = new int[2];
 		ArrayList<Cell> possibleMoves=new ArrayList<Cell>();
 		ArrayList<Ant> tempFinishedAnts=new ArrayList<Ant>();
+		ArrayList<Ant> tempList=new ArrayList<Ant>();
 		double[] chooseMoveList=null;
 		int totalPheromones=0;
 		//***MIGHT NEED TO CHECK WHICH ONES ARE Y-AXIS AND X-AXIS IN MAP AND IN "lastMove[]"***//
@@ -206,12 +218,15 @@ public class Map {
 					maxVal=chooseMoveList[i];
 				}
 			}
-
-			ant.move(chosenCell);
-			
-			if(ant.getCurrent().getType()==0){
-				mapGUI.removeAnt(ant.getPreviousCurrent().getLocation()[1],ant.getPreviousCurrent().getLocation()[0]);
-				mapGUI.putAnt(chosenCell.getLocation()[1],chosenCell.getLocation()[0]);
+			if(chosenCell.getType()!=2){
+				ant.move(chosenCell);
+				if(ant.getCurrent().getType()==0){
+					mapGUI.removeAnt(ant.getPreviousCurrent().getLocation()[1],ant.getPreviousCurrent().getLocation()[0]);
+					mapGUI.putAnt(ant.getCurrent().getLocation()[1],ant.getCurrent().getLocation()[0]);
+				}
+			}else{
+				ant.move(map[currentLoc[1]-lastMove[1]][currentLoc[0]-lastMove[0]]);
+				//tempList.add(ant);
 			}
 			
 			
@@ -232,6 +247,12 @@ public class Map {
 				bestAnt.makeSpecial(specialAntMult);
 			}
 		}
+		for(int i=0;i<tempList.size();i++){
+			Ant tempAnt= new Ant(start_global);
+			antList.add(tempAnt);
+		}
+		antList.removeAll(tempList);
+		tempList.clear();
 		antList.removeAll(tempFinishedAnts);
 		finishedAnts.addAll(tempFinishedAnts);
 	}
