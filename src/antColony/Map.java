@@ -39,7 +39,7 @@ public class Map {
 			System.out.println("REMAKE MAP, TOO MANY FOOD SOURCES SPECIFIED!");
 		}else{
 			while(foodNum<foodSource_in){
-				Cell tempCell=map[height/4][width/4];//getRandomCell();//TEST
+				Cell tempCell=map[height/8][width/8];//getRandomCell();//TEST
 				mapGUI.makeFood(tempCell.getLocation()[1], tempCell.getLocation()[0]);//GUI
 				if(tempCell.getType()==0){
 					foodNum++;
@@ -84,18 +84,28 @@ public class Map {
 		int antRelease=antRelease_in;//how many moves do you want to go through before you release another ant
 		int releaseCounter=0;
 		int finishedAntNum=0;//counts the number of ants who have completed their journey
-		if(antMax>=1){
+		
+		for(int i=0;i<antColonySize_in;i++){
 			Ant tempAnt= new Ant(start);
 			antList.add(tempAnt);
+		}
+		
+		if(antMax>=1){
+			//Ant tempAnt= new Ant(start);
+			//antList.add(tempAnt);
 			while(finishedAntNum<=antMax){
-				//if(finishedAnts.isEmpty()){
+
+				if(finishedAnts.isEmpty()){
 				//releases new ants into map based on counter specified
+				
+				/*
 				releaseCounter++;
 				if(releaseCounter>antRelease && antList.size()+finishedAnts.size()<antColonySize_in){
 					ANT_COUNTER++;
 					antList.add(new Ant(start));
 					releaseCounter=0;
 				}
+				*/
 				try {
 					Thread.sleep(delay_in);
 				} catch (InterruptedException e) {
@@ -107,11 +117,17 @@ public class Map {
 					decayPheromones();
 					finishedAntNum+=releasePheromones(pheromoneLvl_in);
 				}
-				/*}else{
+				}else{
 					releaseAll(pheromoneLvl_in);
 					mapGUI.incFinished();
+					mapGUI.setFinished(BEST_ANT_MOVEMENTS);
 					finishedAntNum++;
-				}*/
+					for(int i=0;i<antColonySize_in;i++){
+						Ant tempAnt= new Ant(start);
+						antList.add(tempAnt);
+					}
+				
+				}
 			}
 		}else{
 			System.out.println("One or more ants must be chosen to be in system!");
@@ -262,6 +278,6 @@ public class Map {
 				
 				ant.getPath().remove(ant.getPath().get(ant.getPath().size()-1));
 			}
-		finishedAnts.remove(ant);
+		finishedAnts.clear();
 	}
 }
