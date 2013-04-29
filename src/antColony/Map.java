@@ -124,6 +124,7 @@ public class Map {
 					e.printStackTrace();
 				}
 				moveAnts();//moves all active ants (adds the number of finished ants to the "finishedAnts" counter)
+				mapGUI.makeStart(start.getLocation()[1], start.getLocation()[0]);//GUI
 				if(finishedAntNum<=antMax){
 					decayPheromones();
 					finishedAntNum+=releasePheromones(pheromoneLvl_in);
@@ -277,12 +278,13 @@ public class Map {
 				mapGUI.incFinished();
 				done++;
 			}else{
-				ant.getPath().get(ant.getPath().size()-1).incPheromone(pheromoneLvl*ant.getSpecial());
-				if(ant.getPath().get(ant.getPath().size()-1).getType()==0){
-					mapGUI.backTrack(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0]);
+				if(ant.getPath().get(ant.getPath().size()-1).getPheromone()<BEST_ANT_MOVEMENTS*5){
+					ant.getPath().get(ant.getPath().size()-1).incPheromone(pheromoneLvl*ant.getSpecial());
+					if(ant.getPath().get(ant.getPath().size()-1).getType()==0){
+						mapGUI.backTrack(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0]);
+					}
+					mapGUI.incPheromone(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0], pheromoneLvl*ant.getSpecial());
 				}
-				mapGUI.incPheromone(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0], pheromoneLvl*ant.getSpecial());
-				
 				ant.getPath().remove(ant.getPath().get(ant.getPath().size()-1));
 			}
 		}
@@ -292,13 +294,14 @@ public class Map {
 	private void releaseAll(int pheromoneLvl){
 		Ant ant=finishedAnts.get(0);
 			while(!ant.getPath().isEmpty()){
-				ant.getPath().get(ant.getPath().size()-1).incPheromone(pheromoneLvl*ant.getSpecial());
-				if(ant.getPath().get(ant.getPath().size()-1).getType()==0){
-					mapGUI.backTrack(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0]);
+				if(ant.getPath().get(ant.getPath().size()-1).getPheromone()<BEST_ANT_MOVEMENTS*5){
+					ant.getPath().get(ant.getPath().size()-1).incPheromone(pheromoneLvl*ant.getSpecial());
+					if(ant.getPath().get(ant.getPath().size()-1).getType()==0){
+						mapGUI.backTrack(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0]);
+					}
+					mapGUI.incPheromone(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0], pheromoneLvl*ant.getSpecial());
 				}
-				mapGUI.incPheromone(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0], pheromoneLvl*ant.getSpecial());
-				
-				ant.getPath().remove(ant.getPath().get(ant.getPath().size()-1));
+					ant.getPath().remove(ant.getPath().get(ant.getPath().size()-1));
 			}
 			for(Ant allAnts:antList){
 				if(allAnts.getCurrent().getType()==0){

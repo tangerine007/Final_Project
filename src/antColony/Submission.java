@@ -27,12 +27,12 @@ public class Submission {
 				//****VALUES CANNOT LIE ON THE "EDGE" OF THE MAP***//
 			int terminateValue=10000;//how many ants need to retrieve food and come back before algorithm is terminated
 			int releaseValue=0;//After how many "time periods"/"moves" should another ant be released onto the map
-			int pheromoneRelease=1;//On its way back to the colony, how many pheromones does an ant release in each cell
-			int specialAntMultiplier=130;//multiplies the number of pheromones released by this value for ants that make a shorter trip
-			int antColonySize=100;//The ant colony consists of this many ants, once this only this many ants can exist in the system at one time
+			int pheromoneRelease=100;//On its way back to the colony, how many pheromones does an ant release in each cell
+			int specialAntMultiplier=3;//multiplies the number of pheromones released by this value for ants that make a shorter trip
+			int antColonySize=500;//The ant colony consists of this many ants, once this only this many ants can exist in the system at one time
 			
 		//GUI_CONTROL
-			int delay=10;//number of miliseconds between each antMove();
+			int delay=90;//number of miliseconds between each antMove();
 		///////////////*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*/////////////////////////////
 
 			

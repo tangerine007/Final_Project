@@ -20,7 +20,7 @@ public class GUI {
         Color antNotPresent = Color.white;
         Color foodCell = Color.green;
         Color textColor = Color.black;
-        Color startCell = Color.pink;
+        Color startCell = Color.CYAN;
         Color backTrack = Color.YELLOW;
         Color obsticle = Color.black;
  
