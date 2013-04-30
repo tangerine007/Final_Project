@@ -273,8 +273,13 @@ public class Map {
 		for(int i=0;i<map.length;i++){
 			for(int j=0;j<map[i].length;j++){
 				if(map[i][j].getPheromone()>1){
-					mapGUI.decPheromone(i, j);
-					map[i][j].decPheromone(1);//decreases pheromones of all cells by 1 if it has at >1 pheromone in it
+					if(map[i][j].getPheromone()>BEST_ANT_MOVEMENTS*2){
+						mapGUI.setPheromone(i, j,BEST_ANT_MOVEMENTS*2);
+						map[i][j].setPheromone(BEST_ANT_MOVEMENTS*2);//decreases pheromones of all cells by 1 if it has at >1 pheromone in it
+					}else{
+						mapGUI.decPheromone(i, j);
+						map[i][j].decPheromone(1);//decreases pheromones of all cells by 1 if it has at >1 pheromone in it
+					}
 				}
 			}
 		}
