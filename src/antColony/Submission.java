@@ -15,7 +15,7 @@ public class Submission {
 		//MAP_INFO - info about spawning the map
 			//max map is around 4500000 which takes ~1000 ms to populate. sqrt(4500000)~2121
 			//worst case scenario is ~10000 ms which occurs when # of food sources is very close to # of cells in map
-			int mapWidth=160;//the map will be populated with this many cells on the X-axis
+			int mapWidth=200;//the map will be populated with this many cells on the X-axis
 			int mapHeight=40;//the map will be populated with this many cells on the Y-axis
 			int foodSources=1;//number of food sources on the map (must be less than available spaces on map)
 		
@@ -25,14 +25,15 @@ public class Submission {
 				int startY=(int) Math.floor(mapHeight*.75);//the Y-axis location of start
 				//****SET ONE OR BOTH TO 0 to have a randomly generated cell selected***//
 				//****VALUES CANNOT LIE ON THE "EDGE" OF THE MAP***//
-			int terminateValue=10000;//how many ants need to retrieve food and come back before algorithm is terminated
+				
+			int terminateValue=100;//how many ants need to retrieve food and come back before algorithm is terminated
 			int releaseValue=0;//After how many "time periods"/"moves" should another ant be released onto the map
-			int pheromoneRelease=100;//On its way back to the colony, how many pheromones does an ant release in each cell
-			int specialAntMultiplier=3;//multiplies the number of pheromones released by this value for ants that make a shorter trip
-			int antColonySize=300;//The ant colony consists of this many ants, once this only this many ants can exist in the system at one time
+			int pheromoneRelease=mapWidth*mapHeight/20;//On its way back to the colony, how many pheromones does an ant release in each cell
+			int specialAntMultiplier=10;//multiplies the number of pheromones released by this value for ants that make a shorter trip
+			int antColonySize=500;//The ant colony consists of this many ants, once this only this many ants can exist in the system at one time
 			
 		//GUI_CONTROL
-			int delay=10;//number of miliseconds between each antMove();
+			int delay=0;//number of miliseconds between each antMove();
 		///////////////*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*/////////////////////////////
 
 			

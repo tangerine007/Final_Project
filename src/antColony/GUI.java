@@ -85,6 +85,15 @@ public class GUI {
         		grid[x][y].setBackground(antNotPresent);
         	grid[x][y].updateUI();
         }
+        
+        public void setPheromone(int x, int y, int val){
+        	int pheromoneCount = val;
+        	grid[x][y].setText(String.valueOf(val));
+        	grid[x][y].setBackground(Color.getHSBColor(60, pheromoneCount%100, 100));
+        	if(pheromoneCount == 2) 
+        		grid[x][y].setBackground(antNotPresent);
+        	grid[x][y].updateUI();
+        }
         public void incPheromone(int x, int y, int inc_in){
         	int pheromoneCount = Integer.parseInt(grid[x][y].getText());
         	grid[x][y].setText(String.valueOf(pheromoneCount+inc_in));
