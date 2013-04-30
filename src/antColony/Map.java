@@ -13,6 +13,7 @@ public class Map {
 	int ANT_COUNTER;//counts how many ants have entered the system
 	int BEST_ANT_MOVEMENTS;//current least number of movements an ant has taken to reach a food source
 	int specialAntMult;//the multiplier for the number of pheromones a special ant will leave compared to a regular ant
+	int pheromoneLvl_global;
 	GUI mapGUI;
 	Cell start_global;
 	
@@ -40,6 +41,7 @@ public class Map {
 			System.out.println("REMAKE MAP, TOO MANY FOOD SOURCES SPECIFIED!");
 		}else{
 			Cell tempCell=map[height/8][width/8];//getRandomCell();//TEST
+			Cell foodCell = tempCell;
 			while(foodNum<foodSource_in){
 				mapGUI.makeFood(tempCell.getLocation()[1], tempCell.getLocation()[0]);//GUI
 				if(tempCell.getType()==0){
@@ -50,7 +52,7 @@ public class Map {
 			
 			for(int i=0;i<width*height/5;i++){
 				tempCell=getRandomCell();
-				if(tempCell.getType()==0){
+				if(tempCell.getType()==0 && tempCell.isNextTo(foodCell.getLocation()) == false){
 					tempCell.makeObsticle();
 					mapGUI.makeObsticle(tempCell.getLocation()[1],tempCell.getLocation()[0]);
 				}	
@@ -91,6 +93,7 @@ public class Map {
 		mapGUI.makeStart(start.getLocation()[1], start.getLocation()[0]);//GUI
 		specialAntMult=specialAntMult_in;
 		antMax=antMax_in;//number of ants in the system
+		pheromoneLvl_global = pheromoneLvl_in;
 		
 		int antRelease=antRelease_in;//how many moves do you want to go through before you release another ant
 		int releaseCounter=0;
@@ -127,9 +130,13 @@ public class Map {
 				mapGUI.makeStart(start.getLocation()[1], start.getLocation()[0]);//GUI
 				if(finishedAntNum<=antMax){
 					decayPheromones();
+					pheromoneLvl_global = BEST_ANT_MOVEMENTS;
+					pheromoneLvl_in=pheromoneLvl_global;
 					finishedAntNum+=releasePheromones(pheromoneLvl_in);
 				}
 				}else{
+					pheromoneLvl_global = BEST_ANT_MOVEMENTS;
+					pheromoneLvl_in=pheromoneLvl_global;
 					releaseAll(pheromoneLvl_in);
 					mapGUI.incFinished();
 					mapGUI.setFinished(BEST_ANT_MOVEMENTS);
@@ -281,7 +288,7 @@ public class Map {
 				if(ant.getPath().get(ant.getPath().size()-1).getPheromone()<BEST_ANT_MOVEMENTS*5){
 					ant.getPath().get(ant.getPath().size()-1).incPheromone(pheromoneLvl*ant.getSpecial());
 					if(ant.getPath().get(ant.getPath().size()-1).getType()==0){
-						mapGUI.backTrack(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0]);
+//						mapGUI.backTrack(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0]);
 					}
 					mapGUI.incPheromone(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0], pheromoneLvl*ant.getSpecial());
 				}
@@ -297,7 +304,7 @@ public class Map {
 				if(ant.getPath().get(ant.getPath().size()-1).getPheromone()<BEST_ANT_MOVEMENTS*5){
 					ant.getPath().get(ant.getPath().size()-1).incPheromone(pheromoneLvl*ant.getSpecial());
 					if(ant.getPath().get(ant.getPath().size()-1).getType()==0){
-						mapGUI.backTrack(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0]);
+//						mapGUI.backTrack(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0]);
 					}
 					mapGUI.incPheromone(ant.getPath().get(ant.getPath().size()-1).getLocation()[1],ant.getPath().get(ant.getPath().size()-1).getLocation()[0], pheromoneLvl*ant.getSpecial());
 				}

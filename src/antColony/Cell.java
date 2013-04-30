@@ -47,4 +47,10 @@ public class Cell {
 	public void makeNormalCell(){
 		cellType=0;
 	}
+
+	public boolean isNextTo(int[] loc) {
+		if((Math.abs(loc[0] - this.loc[0]) <= 1) && (Math.abs(loc[1] - this.loc[1]) <= 1)) 
+			return true;
+		return false;
+	}
 }
