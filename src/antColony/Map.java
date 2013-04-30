@@ -17,8 +17,14 @@ public class Map {
 	GUI mapGUI;
 	Cell start_global;
 	
+	long beforeTime;
+	long afterTime;
+	long performance;
 	//CONSTRUCTORS
 	public Map(int width_in, int height_in,int foodSource_in){//width=elements in each array, height=# of arrays
+		beforeTime=0;
+		afterTime=0;
+		performance=0;
 		System.out.println("ANT MADE IT IN THIS MANY MOVES: ");
 		mapGUI=new GUI(height_in,width_in);//GUI
 		specialAntMult=1;
@@ -108,8 +114,8 @@ public class Map {
 		if(antMax>=1){
 			//Ant tempAnt= new Ant(start);
 			//antList.add(tempAnt);
+			beforeTime = System.currentTimeMillis();
 			while(finishedAntNum<=antMax){
-				
 				if(finishedAnts.isEmpty()){
 				//releases new ants into map based on counter specified
 				
@@ -136,6 +142,10 @@ public class Map {
 					finishedAntNum+=releasePheromones(pheromoneLvl_in);
 				}
 				}else{
+					afterTime = System.currentTimeMillis();
+					performance = (afterTime-beforeTime);
+					System.out.println("TIME: "+performance);
+					beforeTime = System.currentTimeMillis();
 					
 					pheromoneLvl_global = BEST_ANT_MOVEMENTS;
 					pheromoneLvl_in=pheromoneLvl_global;
@@ -308,7 +318,7 @@ public class Map {
 	}
 	private void releaseAll(int pheromoneLvl){
 		Ant ant=finishedAnts.get(0);
-		System.out.println(ant.getPath().size());
+		System.out.println("PATH LENGTH: "+ant.getPath().size());
 			while(!ant.getPath().isEmpty()){
 				if(ant.getPath().get(ant.getPath().size()-1).getPheromone()<BEST_ANT_MOVEMENTS*2){
 					ant.getPath().get(ant.getPath().size()-1).incPheromone(pheromoneLvl*ant.getSpecial());
